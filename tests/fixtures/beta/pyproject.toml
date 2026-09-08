@@ -1,0 +1,5 @@
+[project]
+name = "beta-fixture"
+version = "0.2.0"
+description = "Projet synthétique Python sans dépendance, utilisé par les tests de horn-dev"
+requires-python = ">=3.12"

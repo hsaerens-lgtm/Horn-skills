@@ -1,0 +1,34 @@
+{
+  "$schema": "horn-dev/config-v1 (voir references/config-schema.md du plugin)",
+  "version": 1,
+  "project": {
+    "name": "mon-projet",
+    "stack": ["node", "typescript"],
+    "manifests": ["package.json"]
+  },
+  "paths": {
+    "reports": "reports/dev",
+    "status": "docs/development/STATUS.md",
+    "tasks": "docs/development/tasks"
+  },
+  "commands": {
+    "install": "npm ci",
+    "dev": "npm run dev",
+    "package": "npm pack --pack-destination dist-packages"
+  },
+  "checks": [
+    { "id": "typecheck", "command": "npm run typecheck", "profiles": ["quick", "full"], "mandatory": true },
+    { "id": "tests", "command": "npm test", "profiles": ["quick"], "mandatory": true },
+    { "id": "tests-full", "command": "npm run test:coverage", "profiles": ["full"], "mandatory": true },
+    { "id": "build", "command": "npm run build", "profiles": ["full"], "mandatory": true },
+    { "id": "dist-smoke", "command": "node dist/index.js --version", "profiles": ["full"], "mandatory": true, "expectOutput": "0.1.0" },
+    { "id": "npm-audit", "command": "npm audit --audit-level=high", "profiles": ["full"], "mandatory": false, "network": true }
+  ],
+  "secrets": { "enabled": true, "config": ".gitleaks.toml", "profiles": ["quick", "full"], "mandatory": true },
+  "notApplicable": [
+    { "id": "scenarios-navigateur", "reason": "aucune interface web" }
+  ],
+  "limits": [
+    "Les tests unitaires ne valident pas les services externes réels."
+  ]
+}

@@ -1,14 +1,17 @@
-# Arness
+# horn-toolbox
 
-Application Node.js / TypeScript en démarrage.
+Dépôt source de **horn-dev**, ma boîte à outils de développement assisté pour Claude Code : un plugin personnel (portée utilisateur) qui apporte à chacun de mes projets la même méthode (cadrage, fonctionnalités, correction de bugs, vérification, revue, version locale, reprise de session) sans recopier quoi que ce soit dans les projets. Chaque projet ne garde que ses informations propres dans un petit fichier `.horn-dev.json`.
 
-- Guide de développement pour non-développeur : [docs/development/README.md](docs/development/README.md)
-- Outillage installé : [docs/development/TOOLCHAIN.md](docs/development/TOOLCHAIN.md)
-- Façon de travailler : [docs/development/WORKFLOW.md](docs/development/WORKFLOW.md)
-- État courant : [docs/development/STATUS.md](docs/development/STATUS.md)
+- Le plugin : [plugins/horn-dev/README.md](plugins/horn-dev/README.md)
+- Architecture à trois niveaux et séparation entre projets : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Installer, mettre à jour, revenir en arrière, désinstaller, refaire sur un autre ordinateur : [docs/INSTALL.md](docs/INSTALL.md)
+- Utiliser les commandes dans un projet : [docs/USAGE.md](docs/USAGE.md)
+- Migration depuis l'ancien dossier Arness et correspondance des anciens noms : [docs/MIGRATION.md](docs/MIGRATION.md)
+- État courant : [docs/STATUS.md](docs/STATUS.md)
+
+Tests du dispositif :
 
 ```bash
 npm ci
-npm run check
-npm run dev
+npm test
 ```

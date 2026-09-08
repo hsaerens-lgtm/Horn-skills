@@ -1,0 +1,24 @@
+# Configuration Gitleaks du projet {{PROJECT}} (créée par horn-dev, modifiable librement).
+# Règles par défaut de Gitleaks + exclusion des dossiers générés. Toujours scanner avec --redact.
+
+title = "{{PROJECT}}"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Fichiers générés, dépendances et rapports"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)dist/''',
+  '''(^|/)build/''',
+  '''(^|/)target/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)__pycache__/''',
+  '''(^|/)reports/''',
+  '''(^|/)coverage/''',
+  '''(^|/)package-lock\.json$''',
+  '''(^|/)pnpm-lock\.yaml$''',
+  '''(^|/)uv\.lock$''',
+  '''(^|/)Cargo\.lock$''',
+]

@@ -1,0 +1,31 @@
+{
+  "$schema": "horn-dev/config-v1 (voir plugins/horn-dev/references/config-schema.md)",
+  "version": 1,
+  "project": {
+    "name": "horn-toolbox",
+    "stack": ["node", "typescript", "powershell"],
+    "manifests": ["package.json", ".claude-plugin/marketplace.json", "plugins/horn-dev/.claude-plugin/plugin.json"]
+  },
+  "paths": {
+    "reports": "reports/dev",
+    "status": "docs/STATUS.md",
+    "tasks": "docs/tasks"
+  },
+  "commands": {
+    "install": "npm ci"
+  },
+  "checks": [
+    { "id": "typecheck", "command": "npm run typecheck", "profiles": ["quick", "full"], "mandatory": true },
+    { "id": "tests-dispositif", "command": "npm test", "profiles": ["quick", "full"], "mandatory": true },
+    { "id": "validate-plugin", "command": "claude plugin validate plugins/horn-dev --strict", "profiles": ["quick", "full"], "mandatory": true },
+    { "id": "validate-marketplace", "command": "claude plugin validate .", "profiles": ["full"], "mandatory": true }
+  ],
+  "secrets": { "enabled": true, "config": ".gitleaks.toml", "profiles": ["quick", "full"], "mandatory": true },
+  "notApplicable": [
+    { "id": "scenarios-navigateur", "reason": "boîte à outils sans interface" },
+    { "id": "package", "reason": "le livrable est le dépôt lui-même, installé via la marketplace locale" }
+  ],
+  "limits": [
+    "Les tests exécutent les scripts sur des projets synthétiques ; la découverte des skills dans une session Claude Code se vérifie séparément (claude plugin details, nouvelle session)."
+  ]
+}

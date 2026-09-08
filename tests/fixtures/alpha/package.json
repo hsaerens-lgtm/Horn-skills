@@ -1,0 +1,11 @@
+{
+  "name": "alpha-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Projet synthétique Node sans dépendance, utilisé par les tests de horn-dev",
+  "scripts": {
+    "test": "node tests/run.js",
+    "build": "node -e \"console.log('alpha build ok')\"",
+    "start": "node src/lib.js"
+  }
+}

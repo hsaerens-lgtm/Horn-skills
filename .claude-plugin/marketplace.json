@@ -1,0 +1,21 @@
+{
+  "name": "horn-toolbox",
+  "owner": {
+    "name": "Horn S"
+  },
+  "metadata": {
+    "description": "Marketplace locale personnelle : boîte à outils de développement assisté horn-dev.",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "horn-dev",
+      "source": "./plugins/horn-dev",
+      "description": "Méthode de développement assistée commune à mes projets : init, feature, bugfix, check, review, release, resume. Les données de chaque projet restent dans le projet.",
+      "category": "development",
+      "author": {
+        "name": "Horn S"
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "horn-dev",
+  "displayName": "horn-dev",
+  "version": "0.1.0",
+  "description": "Boîte à outils de développement assisté : cadrage, fonctionnalités, correction de bugs, vérification, revue, version locale et reprise de session, avec des scripts génériques pilotés par un fichier .horn-dev.json propre à chaque projet.",
+  "author": {
+    "name": "Horn S"
+  },
+  "license": "MIT",
+  "keywords": ["workflow", "tdd", "review", "verification", "powershell", "windows"]
+}

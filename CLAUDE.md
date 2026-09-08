@@ -1,18 +1,24 @@
-# Arness
+# horn-toolbox (dépôt source de la boîte à outils horn-dev)
 
-Application Node.js / TypeScript en démarrage (aucune fonctionnalité produit encore). Environnement Windows 11, Node 24, npm, Windows PowerShell 5.1.
-
-## Commandes
-
-- Lancer : `npm run dev` (sources) · `npm start` (dist compilé) · `scripts/dev/run.ps1 [-Mode dev|dist]`
-- Vérifier : `npm run check` (rapide) · `npm run check:full` (livraison) · rapports dans `reports/dev/`
-- Tests : `npm test` · `npm run test:watch` · `npm run test:coverage` · typage : `npm run typecheck`
-- Diagnostic : `npm run doctor` · Paquet local : `npm run package` (jamais de publication)
+Ce dépôt est le **source** du plugin Claude Code personnel `horn-dev` et de sa marketplace locale `horn-toolbox`. Ce n'est pas une application : ne pas y ajouter de code produit ni y déplacer d'autres projets. Ce fichier concerne le développement de la boîte à outils ; il ne doit pas être copié dans les projets utilisateurs (ils reçoivent la section `templates/CLAUDE-section.md` via `/horn-dev:init`).
 
 ## Structure
 
-`src/` code · `tests/` tests Vitest · `scripts/dev/` scripts PowerShell · `docs/development/` guide, outillage, workflow, état (`STATUS.md`), fiches de tâches · `.claude/` règles et skills · `.github/workflows/quality.yml` CI (non exécutée tant qu'aucun dépôt distant n'existe).
+- `.claude-plugin/marketplace.json` : marketplace locale `horn-toolbox` (plugin `horn-dev`, source `./plugins/horn-dev`).
+- `plugins/horn-dev/` : le plugin, autonome (manifeste, `skills/`, `scripts/`, `templates/`, `references/`, `README.md`). Aucune dépendance vers le reste du dépôt.
+- `tests/` : tests Vitest du dispositif (structure du plugin, comportement réel des scripts PowerShell sur les projets synthétiques `tests/fixtures/alpha` et `beta`).
+- `docs/` : architecture, installation et mise à jour, migration depuis l'ancien dossier Arness, état (`STATUS.md`).
+- `archive/` : anciennes versions conservées pour référence, inactives.
+
+## Commandes (développement de la boîte à outils)
+
+- `npm ci` puis `npm test` : tests du dispositif (exécutent réellement les scripts dans des dossiers temporaires isolés, `HORN_DEV_HOME` redirigé).
+- `npm run typecheck` · `npm run validate` (`claude plugin validate`) · `npm run check` (vérification horn-dev de ce dépôt via `.horn-dev.json`).
+- Installation locale : voir `docs/INSTALL.md` (`claude plugin marketplace add <ce dossier>` puis `claude plugin install horn-dev@horn-toolbox --scope user`). La copie installée n'est mise à jour qu'après bump de version dans `plugins/horn-dev/.claude-plugin/plugin.json` et `claude plugin update`.
 
 ## Règles
 
-Voir `.claude/rules/` (workflow, tests, sécurité, Context7). Points d'entrée : `/horn-feature`, `/horn-bugfix`, `/horn-check`, `/horn-review`, `/horn-release`, `/horn-resume`. Méthode : plugin Superpowers. Documentation : Context7 (`/find-docs`). Reprise de session : lire `docs/development/STATUS.md`.
+- Le plugin ne doit contenir ni chemin absolu propre à cette machine, ni secret, ni donnée d'un projet (tests `tests/horn-dev-plugin.test.ts`).
+- Scripts PowerShell compatibles Windows PowerShell 5.1 et PowerShell 7, `-ProjectDir` explicite, jamais le dossier du plugin comme cible.
+- Ne jamais affaiblir un test pour obtenir un succès. Toute modification de skill se vérifie par `npm run validate` puis par une nouvelle session Claude Code après `claude plugin update`.
+- Ne pas pousser, publier ni créer de dépôt distant sans demande explicite.
