@@ -1,0 +1,61 @@
+# Rejoue les contrôles locaux de scripts/dev/check.ps1 (profil full) sur GitHub Actions.
+# Ce fichier n'est exécuté qu'une fois le dépôt poussé sur GitHub : un fichier CI local n'est pas une CI exécutée.
+name: quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Typage, tests, compilation, version compilée
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Tests avec couverture
+        run: npm run test:coverage
+        env:
+          CI: "true"
+      - name: Compilation
+        run: npm run build
+      - name: Lancement de la version compilée
+        run: |
+          expected=$(node -p "require('./package.json').version")
+          actual=$(node dist/index.js --version)
+          echo "attendu=$expected obtenu=$actual"
+          test "$actual" = "$expected"
+      - name: Audit des dépendances (informatif)
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      - name: Rapports de test
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: reports-dev
+          path: reports/dev/
+          if-no-files-found: ignore
+
+  secrets:
+    name: Recherche de secrets (Gitleaks, sorties masquées)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+          # Pour un dépôt d'organisation, ajouter GITLEAKS_LICENSE (gratuite sur gitleaks.io) :
+          # GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}

@@ -1,0 +1,38 @@
+{
+  "name": "arness",
+  "version": "0.1.0",
+  "description": "Arness — application Node.js / TypeScript (en cours de démarrage)",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "arness": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/check.ps1 -Profile quick",
+    "check:full": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/check.ps1 -Profile full",
+    "doctor": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/doctor.ps1",
+    "package": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/package.ps1"
+  },
+  "devDependencies": {
+    "@types/node": "26.5.0",
+    "@vitest/coverage-v8": "5.0.0",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2",
+    "vitest": "5.0.0"
+  }
+}

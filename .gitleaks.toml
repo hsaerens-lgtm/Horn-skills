@@ -1,0 +1,21 @@
+# Configuration Gitleaks du projet Arness.
+# Étend les règles par défaut de Gitleaks et exclut uniquement les chemins générés.
+# Les sorties doivent toujours être produites avec --redact : aucune valeur détectée
+# ne doit apparaître dans un rapport ou dans le chat.
+
+title = "Arness"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Fichiers générés, dépendances et rapports (jamais du code source du projet)"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)dist/''',
+  '''(^|/)dist-packages/''',
+  '''(^|/)reports/''',
+  '''(^|/)coverage/''',
+  '''(^|/)\.dev-backups/''',
+  '''(^|/)package-lock\.json$''',
+]
