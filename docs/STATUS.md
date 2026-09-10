@@ -20,7 +20,7 @@ Mis à jour le 2026-09-10. Fichier de reprise pour ce dépôt (source de la boî
 ## Incomplet / à confirmer par l'utilisateur
 - Essais du comportement de Claude (routage de `dev`, tâche simple sans dispositif excessif, analyse et revue sans modification, feature testée, bug avec non-régression) : **NON VÉRIFIÉS**, à faire en session interactive selon `docs/TEST-PROTOCOL.md` (la CLI `claude -p` n'est pas connectée sur ce poste).
 - Découverte de `/horn-dev:dev` dans une nouvelle session (la session d'installation a chargé la 0.1.0).
-- `security-guidance` à l'exécution : premier démarrage de session (création du venv, `~/.claude/security/log.txt`), puis essai d'un `eval(` dans une copie de fixture pour voir l'avertissement.
+- `security-guidance` : couche « motifs » constatée en fonctionnement le 2026-09-10 (avertissement sur un `eval(` cité dans une page HTML) ; revues à appel modèle (fin de tour, commit) encore à observer en session projet.
 
 ## Bloqué
 - Rien côté local. CI en attente d'un dépôt distant (aucun push sans demande).
