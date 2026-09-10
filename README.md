@@ -5,6 +5,7 @@ Dépôt source de **horn-dev**, ma boîte à outils de développement assisté p
 - Le plugin : [plugins/horn-dev/README.md](plugins/horn-dev/README.md)
 - Architecture à trois niveaux et séparation entre projets : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Installer, mettre à jour, revenir en arrière, désinstaller, refaire sur un autre ordinateur : [docs/INSTALL.md](docs/INSTALL.md)
+- Prompt à coller dans Claude Code pour installer toutes les dépendances sur une nouvelle machine : [docs/BOOTSTRAP.md](docs/BOOTSTRAP.md)
 - Utiliser les commandes dans un projet : [docs/USAGE.md](docs/USAGE.md)
 - Migration depuis l'ancien dossier Arness et correspondance des anciens noms : [docs/MIGRATION.md](docs/MIGRATION.md)
 - Capacités, déclenchement et limites : [docs/CAPABILITIES.md](docs/CAPABILITIES.md)
