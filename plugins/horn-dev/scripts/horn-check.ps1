@@ -128,12 +128,13 @@ if ($failed.Count -gt 0) { $exit = $script:ExitFailed; $verdict = "ÉCHEC : $($f
 elseif ($skipped.Count -gt 0) { $exit = $script:ExitNotVerified; $verdict = "NON VÉRIFIÉ : $($skipped.Count) contrôle(s) obligatoire(s) NON EXÉCUTÉ(S)" }
 
 $gitState = Get-GitState $project
+$fingerprint = Get-TreeFingerprint $project
 $glv = $null; $glp = Resolve-Gitleaks; if ($glp) { $glv = (& $glp version) }
 $pluginVersion = (Get-Content (Join-Path (Get-PluginRoot) ".claude-plugin\plugin.json") -Raw | ConvertFrom-Json).version
 $steps = @($script:results | ForEach-Object { [ordered]@{ name=$_.Name; status=$_.Status; mandatory=$_.Mandatory; exitCode=$_.ExitCode; durationSec=$_.DurationSec; command=$_.Command; log=$_.Log } })
 $report = [ordered]@{
     tool = "horn-dev check $pluginVersion"; project = $projectName; projectDir = $project; profile = $Profile
-    date = (Get-Date).ToString("s"); git = $gitState
+    date = (Get-Date).ToString("s"); git = $gitState; treeFingerprint = $fingerprint
     versions = [ordered]@{ node = (Get-ToolVersion node); python = (Get-ToolVersion python); gitleaks = $glv }
     verdict = $verdict; exitCode = $exit; steps = $steps
 }
@@ -147,6 +148,7 @@ $md.Add("")
 $md.Add("- Date : $($report.date) · Outil : $($report.tool)")
 $md.Add("- Projet : $project")
 $md.Add("- Git : branche $($gitState.branch), commit $($gitState.commit), modifications non validées : $($gitState.dirty)")
+$md.Add("- Empreinte du code vérifié : ``$fingerprint`` (comparer avec horn-fingerprint.ps1 : une empreinte différente périme ces preuves)")
 $md.Add("- Versions : node $($report.versions.node), python $($report.versions.python), gitleaks $glv")
 $md.Add("")
 $md.Add("| Contrôle | Obligatoire | Statut | Code | Durée (s) | Commande |")
@@ -168,4 +170,5 @@ Write-Host ""
 $color = "Yellow"; if ($exit -eq 0) { $color = "Green" } elseif ($exit -eq 1) { $color = "Red" }
 Write-Host $verdict -ForegroundColor $color
 Write-Host "Rapport : $mdPath"
+Write-Host "Empreinte du code vérifié : $fingerprint"
 exit $exit

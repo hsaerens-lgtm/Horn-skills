@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { PLUGIN_ROOT, REPO_ROOT, listFiles } from "./helpers.js";
 
-const SKILLS = ["init", "feature", "bugfix", "check", "review", "release", "resume"];
+const SKILLS = ["dev", "init", "feature", "bugfix", "check", "review", "release", "resume"];
 const USER_ONLY = ["init", "release"];
 
 function frontmatter(path: string): Record<string, string> {
@@ -42,7 +42,7 @@ describe("manifestes du plugin", () => {
 });
 
 describe("skills du plugin", () => {
-  it("les sept skills existent avec name et description", () => {
+  it("les huit skills existent avec name et description", () => {
     for (const s of SKILLS) {
       const path = join(PLUGIN_ROOT, "skills", s, "SKILL.md");
       expect(existsSync(path), path).toBe(true);
@@ -78,8 +78,17 @@ describe("skills du plugin", () => {
     }
   });
 
+  it("dev respecte l'intention : analyser, relire et vérifier n'autorisent pas la modification", () => {
+    const body = readFileSync(join(PLUGIN_ROOT, "skills", "dev", "SKILL.md"), "utf8");
+    expect(body).toMatch(/\*\*analyser\*\*.*\*\*non\*\*/);
+    expect(body).toMatch(/\*\*relire\*\*.*\*\*non\*\*/);
+    expect(body).toMatch(/\*\*vérifier\*\*.*\*\*non\*\*/);
+    expect(body).toContain("verification-grid.md");
+    expect(body).toContain("horn-fingerprint.ps1");
+  });
+
   it("les skills ciblent le projet courant et les scripts du plugin, jamais un chemin codé en dur", () => {
-    for (const s of ["check", "init", "release", "review"]) {
+    for (const s of ["check", "init", "release", "review", "dev"]) {
       const body = readFileSync(join(PLUGIN_ROOT, "skills", s, "SKILL.md"), "utf8");
       expect(body).toContain("${CLAUDE_PLUGIN_ROOT}");
       expect(body).toContain("${CLAUDE_PROJECT_DIR}");

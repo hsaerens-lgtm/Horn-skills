@@ -1,36 +1,35 @@
 ---
 name: feature
-description: Ajouter une fonctionnalité au projet courant de bout en bout — cadrage, critères d'acceptation, plan, implémentation par petits pas avec tests, vérification et relecture. Utiliser quand l'utilisateur demande une nouvelle fonctionnalité, une évolution ou un changement de comportement du produit.
+description: Implémenter une fonctionnalité ou une évolution dans le projet courant, avec un parcours proportionné à la taille du changement — comprendre, évaluer les impacts, intervenir avec tests, vérifier, rendre compte avec preuves. Utiliser quand l'utilisateur demande d'ajouter ou de changer un comportement du produit. Pour une demande dont la nature est incertaine, préférer /horn-dev:dev.
 argument-hint: "[description du besoin]"
 ---
 
-# /horn-dev:feature — ajouter une fonctionnalité
+# /horn-dev:feature — implémenter une fonctionnalité
 
-**Projet cible** : `${CLAUDE_PROJECT_DIR}`. Vérifier qu'il contient `.horn-dev.json` ; sinon proposer `/horn-dev:init` (invoqué par l'utilisateur) et, en attendant, ne pas exécuter de commandes du projet.
+**Projet cible** : `${CLAUDE_PROJECT_DIR}`. Sans `.horn-dev.json`, proposer `/horn-dev:init` (invoqué par l'utilisateur) et n'exécuter aucune commande du projet.
 
-**Entrée attendue** : `$ARGUMENTS` = description du besoin. Vide → demander une phrase et s'arrêter.
+**Entrée** : `$ARGUMENTS` = le besoin. Vide → demander une phrase et s'arrêter.
 
-**Prérequis** : `git status --short` noté au départ ; les modifications préexistantes de l'utilisateur ne sont ni stashées ni mélangées au travail.
+L'utilisateur pilote le produit ; tu prends en charge la technique. Ne recommence pas le cadrage : reformule le besoin en une phrase, questionne un choix seulement si un risque technique concret le justifie (avec recommandation), puis avance.
 
-## Actions
+## Dimensionner (grille section 1 : `${CLAUDE_PLUGIN_ROOT}/references/verification-grid.md`)
 
-1. **Contexte** : lire `.horn-dev.json` (commandes, contrôles, limites), le fichier STATUS déclaré dans `paths.status`, les fiches ouvertes dans `paths.tasks`, puis le code concerné (serveur de langage si disponible, sinon Grep/Glob et le signaler).
-2. **Cadrage** : reformuler le besoin en une phrase ; lister des critères d'acceptation vérifiables et les composants touchés. Besoin ambigu ou choix produit important → invoquer `superpowers:brainstorming` (si Superpowers est disponible) puis faire valider par l'utilisateur (AskUserQuestion) avant de coder. Détail technique ordinaire → décider et l'expliquer en une ligne.
-3. **Fiche** : créer `<paths.tasks>/<AAAA-MM-JJ>-<slug>.md` depuis `TEMPLATE.md` (ou `${CLAUDE_PLUGIN_ROOT}/templates/TASK.md` s'il manque).
-4. **Plan** : plus d'un fichier ou plus d'une heure → `superpowers:writing-plans` ; sinon trois à six étapes dans la fiche.
-5. **Documentation** : pour une API de bibliothèque, identifier la version installée (manifeste et lock du projet) puis `/find-docs` (Context7) ; sans Context7, documentation officielle et le dire.
-6. **Implémentation** : `superpowers:test-driven-development` par petits incréments (rouge → vert → refactor). Ne jamais supprimer du code préexistant ; pour l'existant, d'abord des tests qui décrivent le comportement actuel.
-7. **Vérification partagée** : `/horn-dev:check` (profil quick). Un échec se corrige ou se documente ; ne jamais affaiblir un test.
-8. **Relecture** : `/horn-dev:review` (contexte séparé) ou `superpowers:requesting-code-review`. Traiter les points bloquants.
-9. **Conclusion** : `superpowers:verification-before-completion` ; mettre à jour la fiche et STATUS.
+- **Petit** (libellé, valeur, option triviale) : lire → modifier → `/horn-dev:check` quick → diff → compte rendu court. Ni fiche, ni plan, ni sous-agent.
+- **Moyen** (nouvelle fonction, option, changement dans un composant) : parcours A à E ci-dessous. Fiche seulement si la tâche dépasse la session.
+- **Grand** (nouveau composant, contrat ou format modifié, plusieurs composants, données ou accès) : cadrage bref si un point est vraiment ambigu (`superpowers:brainstorming`), fiche `<paths.tasks>/<AAAA-MM-JJ>-<slug>.md` depuis `TEMPLATE.md`, plan (`superpowers:writing-plans`), puis A à E avec `check full` et revue séparée.
 
-## Sorties
+## Parcours
 
-Fonctionnalité livrée, tests ajoutés (fichiers, nombre), résultat de la relecture, verdict de `/horn-dev:check` (rapport dans `paths.reports`), et **limites de validation** (non vérifié : interface, données réelles, version compilée…).
+A. **Comprendre** : instructions du projet, `.horn-dev.json`, code concerné et ses usages (serveur de langage, sinon Grep), `git status --short`, échecs déjà présents (`check-latest.json`). Résultat observable attendu écrit en une phrase.
+B. **Évaluer les impacts** : composants touchés ; grille section 2 → vérifications nécessaires, nommées avant de coder. Risque hors périmètre → signalé, proposé à part.
+C. **Intervenir** : changement limité, conventions existantes, pas de dépendance nouvelle si une capacité existante convient, pas de renommage ni reformatage hors demande. Existant non testé → d'abord des tests qui décrivent le comportement à préserver. Nouveau code → `superpowers:test-driven-development` si disponible. Bibliothèques → version installée puis `/find-docs`.
+D. **Vérifier** : `powershell -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/horn-check.ps1" -ProjectDir "${CLAUDE_PROJECT_DIR}" -Profile quick` (ou `full`). Relire `git diff` : erreurs, oublis, hors périmètre. Revue séparée (`/horn-dev:review`) si domaine sensible ou taille grande. Toute modification après le rapport → relancer (empreinte `treeFingerprint`).
+E. **Rendre compte** : résultat · vérifications exécutées (statuts et chemin du rapport) · limites et risques · décision attendue de l'utilisateur, seulement si nécessaire. Mettre à jour STATUS pour un changement moyen ou grand.
 
 ## Limites et conditions d'arrêt
 
 - Ne pas pousser, publier ni préparer de version : `/horn-dev:release` est réservé à l'utilisateur.
-- S'arrêter et demander si : besoin ambigu après cadrage, dépendance nouvelle ou API facturée nécessaire, contrôle obligatoire impossible (le marquer NON VÉRIFIÉ).
-- Trois cycles sans progrès sur un même test → passer à `superpowers:systematic-debugging` au lieu d'enchaîner des tentatives.
-- Si Superpowers n'est pas disponible dans cette session, suivre les mêmes étapes avec `${CLAUDE_PLUGIN_ROOT}/references/workflow.md` et le signaler.
+- Ne jamais affaiblir un test ni masquer un problème (exception silencieuse, délai arbitraire, validation supprimée).
+- Demander l'accord avant : réécriture importante, nouvelle dépendance, API facturée, migration, opération destructive.
+- Trois cycles sans progrès sur un même test → `superpowers:systematic-debugging` ou arrêt avec diagnostic.
+- Sans Superpowers, Context7 ou serveur de langage : suivre `${CLAUDE_PLUGIN_ROOT}/references/workflow.md` et le signaler.

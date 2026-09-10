@@ -166,10 +166,60 @@ function Invoke-Step {
     $sw.Stop()
     $status = $script:StatusFail
     if ($code -eq 0) { $status = $script:StatusOk }
+    elseif (Test-MissingExecutable -ExitCode $code -LogPath $LogPath) {
+        # Outil indisponible : le contrôle n'a pas pu être exécuté, il ne doit pas passer pour un échec du produit.
+        $status = $script:StatusSkipped
+        Add-Content -LiteralPath $LogPath -Value "`n[horn-dev] Exécutable introuvable : contrôle NON EXÉCUTÉ (installer l'outil dans l'environnement du projet)." -Encoding UTF8
+    }
     return [pscustomobject]@{
         Name = $Name; Command = $Command; Mandatory = $Mandatory; Status = $status
         ExitCode = $code; DurationSec = [math]::Round($sw.Elapsed.TotalSeconds, 1); Log = $LogPath
     }
+}
+
+function Test-MissingExecutable {
+    # cmd.exe renvoie 9009 (ou 1 quand la sortie est redirigée) pour une commande inexistante ; bash 127.
+    # On s'appuie sur le message exact du shell dans les premières lignes du journal, jamais sur le seul code.
+    param([int]$ExitCode, [string]$LogPath)
+    if ($ExitCode -eq 0) { return $false }
+    $head = ""
+    try { $head = ((Get-Content -LiteralPath $LogPath -TotalCount 3 -ErrorAction SilentlyContinue) -join " ") } catch { }
+    return ($head -match "is not recognized as an internal or external command|n'est pas reconnu en tant que commande interne|: command not found")
+}
+
+function Get-TreeFingerprint {
+    <#
+      Empreinte SHA-256 de l'état du code : commit HEAD + fichiers modifiés/non suivis + diff complet.
+      Deux rapports avec la même empreinte portent sur le même code ; une empreinte différente périme les preuves.
+      Hors dépôt Git : chemins, tailles et dates des fichiers (dossiers générés exclus).
+    #>
+    param([string]$Path)
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    $sb = New-Object System.Text.StringBuilder
+    if (Test-Path (Join-Path $Path ".git")) {
+        [void]$sb.Append((& cmd /c "git -C `"$Path`" rev-parse HEAD 2>nul") -join "`n")
+        [void]$sb.Append("`n--status--`n")
+        [void]$sb.Append((& cmd /c "git -C `"$Path`" status --porcelain --untracked-files=all 2>nul") -join "`n")
+        [void]$sb.Append("`n--diff--`n")
+        [void]$sb.Append((& cmd /c "git -C `"$Path`" diff HEAD 2>nul") -join "`n")
+        foreach ($u in (& cmd /c "git -C `"$Path`" ls-files --others --exclude-standard 2>nul")) {
+            $f = Join-Path $Path $u
+            if (Test-Path -LiteralPath $f -PathType Leaf) { [void]$sb.Append("`n--untracked $u--`n"); [void]$sb.Append([System.IO.File]::ReadAllText($f)) }
+        }
+        $prefix = "git:"
+    } else {
+        # Hors Git : contenu des fichiers (pas les dates, pour qu'un fichier restauré redonne la même empreinte). Fichiers > 5 Mo : taille seule.
+        $skip = '\\(node_modules|dist|build|target|reports|coverage|\.venv|__pycache__|\.git)(\\|$)'
+        Get-ChildItem -LiteralPath $Path -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch $skip } | Sort-Object FullName | ForEach-Object {
+            [void]$sb.Append($_.FullName.Substring($Path.Length)); [void]$sb.Append("|"); [void]$sb.Append($_.Length); [void]$sb.Append("|")
+            if ($_.Length -le 5MB) { [void]$sb.Append((($sha.ComputeHash([System.IO.File]::ReadAllBytes($_.FullName)) | ForEach-Object { $_.ToString("x2") }) -join "")) }
+            [void]$sb.Append("`n")
+        }
+        $prefix = "fs:"
+    }
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($sb.ToString())
+    $hash = ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString("x2") }) -join ""
+    return $prefix + $hash.Substring(0, 16)
 }
 
 function New-StepResult {

@@ -1,5 +1,9 @@
 # Façon de travailler horn-dev
 
+## Répartition des responsabilités
+
+L'utilisateur pilote le produit, les priorités et l'expérience utilisateur. La boîte à outils prend en charge la technique : implémentation et qualité du code, compréhension et correction des bugs, tests et non-régression, sécurité et secrets, données et compatibilité, performances, compilation et packaging, intégration de services et comportements IA. L'utilisateur n'a pas à nommer un spécialiste ou un test : `/horn-dev:dev` classe la demande et applique la grille de vérifications (`verification-grid.md`). L'assistant remet un choix en question seulement pour un risque technique concret, avec une recommandation, et signale les cas nécessitant une revue spécialisée humaine.
+
 ## Trois niveaux, strictement séparés
 
 | Niveau | Contient | Ne contient jamais |
@@ -10,52 +14,45 @@
 
 La liste des projets approuvés vit dans `%USERPROFILE%\.horn-dev\` (réglage local non partagé).
 
-## Mode coordonné
+## Point d'entrée et commandes spécialisées
+
+| Commande | Rôle | Modifie le produit ? | Invocation |
+|---|---|---|---|
+| `/horn-dev:dev [demande]` | classe l'intention (implémenter, corriger, analyser, relire, vérifier), dimensionne, applique la grille | selon l'intention ; jamais pour analyser, relire, vérifier | utilisateur ou Claude |
+| `/horn-dev:feature [besoin]` | implémentation proportionnée | oui | utilisateur ou Claude |
+| `/horn-dev:bugfix [problème]` | diagnostic et correction | oui | utilisateur ou Claude |
+| `/horn-dev:check [quick|full]` | contrôles déclarés, rapport, statuts | non | utilisateur ou Claude |
+| `/horn-dev:review [périmètre] [focus]` | revue séparée, preuves à empreinte | non | utilisateur ou Claude |
+| `/horn-dev:resume` | reprise du contexte | non | utilisateur ou Claude |
+| `/horn-dev:init` | adaptation légère d'un projet | crée seulement les fichiers de suivi absents | utilisateur seul |
+| `/horn-dev:release` | version locale, jamais publiée | construit un artefact | utilisateur seul |
+
+Le routage de `dev` repose sur des instructions : il est fiable pour les formulations courantes mais pas garanti. Les commandes spécialisées restent l'invocation explicite fiable. Une commande seule ne déclenche jamais tout le parcours.
+
+## Parcours par défaut (modification autorisée)
 
 ```
-/horn-dev:feature "besoin"
-→ cadrage (superpowers:brainstorming si ambigu ; validation par l'utilisateur)
-→ critères d'acceptation (fiche dans paths.tasks)
-→ plan (superpowers:writing-plans)
-→ implémentation et tests (superpowers:test-driven-development ; /find-docs pour les bibliothèques)
-→ vérification (/horn-dev:check → horn-check.ps1 → rapport dans paths.reports)
-→ relecture (/horn-dev:review, contexte séparé, exige des preuves)
-→ conclusion (superpowers:verification-before-completion ; fiche + STATUS)
+A. Comprendre   : instructions, code et usages, état Git, échecs présents, résultat attendu
+B. Impacts      : composants touchés → grille → vérifications nommées avant de coder
+C. Intervenir   : changement limité, conventions, tests (existant d'abord), pas de hors périmètre
+D. Vérifier     : horn-check (quick|full), diff relu, revue séparée si risque, empreinte à jour
+E. Rendre compte: résultat · vérifications exécutées · limites · décision attendue
 ```
 
-## Mode indépendant
+Petit changement : A → C → D (quick) → E, en quelques minutes. Grand changement : cadrage bref, fiche, plan, TDD, check full, revue.
 
-| Besoin | Skill | Sans Claude |
-|---|---|---|
-| documentation | `/find-docs` | `npx ctx7@latest library <lib> "<question>"` |
-| vérifier | `/horn-dev:check [quick|full]` | `horn-check.ps1 -ProjectDir <projet> -Profile quick` |
-| relire | `/horn-dev:review` | `git diff` |
-| investiguer | `/horn-dev:bugfix "…"` | commandes de test du projet |
-| préparer une version | `/horn-dev:release` (utilisateur) | `horn-package.ps1 -ProjectDir <projet>` |
-| reprendre | `/horn-dev:resume` | lire STATUS, `git status`, `check-latest.json` |
-| préparer un projet | `/horn-dev:init` (utilisateur) | `horn-init.ps1 -ProjectDir <projet> [-Apply -Approve]` |
-| diagnostiquer | — | `horn-doctor.ps1 [-ProjectDir <projet>]` |
+## Preuves
 
-Règles : `check`, `review` et `resume` n'appellent jamais `feature`, `bugfix`, `init` ni `release`. `init` et `release` ne sont invoqués que par l'utilisateur. L'étape de vérification est unique et partagée (`horn-check.ps1`).
+- Statuts : RÉUSSI (exécuté, code 0) · ÉCHOUÉ (exécuté, code ≠ 0 ou sortie inattendue) · NON EXÉCUTÉ (outil absent, commande vide, étape précédente échouée) · NON APPLICABLE (déclaré sans objet).
+- Un contrôle obligatoire NON EXÉCUTÉ empêche le verdict SUCCÈS (code 2). Codes : 0 succès · 1 échec · 2 non vérifié · 3 usage · 4 non approuvé · 5 non initialisé.
+- Chaque rapport porte `treeFingerprint`, l'empreinte de l'état exact du code vérifié (`horn-fingerprint.ps1`). Une modification ultérieure change l'empreinte et périme les preuves : relancer les contrôles concernés.
+- Ne jamais confondre : code modifié · compilation réussie · tests réussis · application réellement exécutée · version distribuable validée.
+- Interdits : supprimer un test, affaiblir une assertion, modifier un résultat attendu, exclure un contrôle pour obtenir du vert.
 
-## Statuts et codes
+## Réutilisation
 
-| Statut | Sens |
-|---|---|
-| RÉUSSI | exécuté, code 0 |
-| ÉCHOUÉ | exécuté, code ≠ 0 ou sortie inattendue |
-| NON EXÉCUTÉ | prévu mais impossible (outil absent, étape précédente échouée, commande vide) |
-| NON APPLICABLE | sans objet pour ce projet (déclaré dans `.horn-dev.json`) |
-
-Un contrôle obligatoire NON EXÉCUTÉ empêche le verdict SUCCÈS (code 2). C'est volontaire.
-
-## Dégradation propre
-
-- Sans Superpowers : suivre ce document ; le signaler dans le compte rendu.
-- Sans Context7 : documentation officielle ; le signaler.
-- Sans serveur de langage : Grep/Glob ; le signaler.
-- Sans Gitleaks ou sans les outils du projet : NON EXÉCUTÉ, verdict NON VÉRIFIÉ, pas de livraison « validée ».
+Superpowers (méthode) et Context7 (documentation) sont invoqués par leurs noms réels, pas recopiés (`superpowers.md`). Aucun hook n'est déclaré par horn-dev. Sans un de ces outils : suivre ce document et le signaler.
 
 ## Transfert entre étapes
 
-Pas de mémoire implicite : une fiche par tâche importante (objectif, critères, périmètre, décisions, fichiers modifiés, état des tests, risques, blocages, prochaine action) et un STATUS à jour en fin de session. Un sous-agent reçoit le périmètre, la fiche et les preuves dans son prompt. Parallélisme initial limité.
+Pas de mémoire implicite ni partagée : une fiche par tâche importante (objectif, critères, périmètre, décisions, fichiers, état des tests, risques, blocages, prochaine action) et un STATUS à jour. Un sous-agent de revue reçoit le besoin, le diff et les preuves, et cherche des défauts précis sans corriger.

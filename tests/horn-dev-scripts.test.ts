@@ -174,6 +174,52 @@ describe("vérification pilotée par le projet", () => {
   });
 });
 
+describe("preuves liées à l'état du code", () => {
+  it("le rapport porte une empreinte égale à horn-fingerprint, qui change dès qu'un fichier change", () => {
+    const before = runScript("horn-fingerprint.ps1", ["-ProjectDir", ws.alpha], ws.home);
+    expect(before.code).toBe(0);
+    const fp = before.stdout.trim().split(/\r?\n/).pop()!;
+    expect(fp).toMatch(/^(git|fs):[0-9a-f]{16}$/);
+    const r = runScript("horn-check.ps1", ["-ProjectDir", ws.alpha, "-Profile", "quick"], ws.home);
+    const latest = JSON.parse(readFileSync(join(ws.alpha, "reports/dev/check-latest.json"), "utf8"));
+    expect(latest.treeFingerprint).toBe(fp);
+    expect(r.stdout).toContain(fp);
+    // Une modification du code, même sans commit, change l'empreinte : les preuves du rapport sont périmées.
+    const lib = join(ws.alpha, "src", "lib.js");
+    const original = readFileSync(lib, "utf8");
+    try {
+      writeFileSync(lib, original + "\n// modification après rapport\n");
+      const after = runScript("horn-fingerprint.ps1", ["-ProjectDir", ws.alpha], ws.home).stdout.trim().split(/\r?\n/).pop();
+      expect(after).not.toBe(fp);
+    } finally {
+      writeFileSync(lib, original);
+    }
+    // Le dossier reports (hors code) ne compte pas : l'empreinte redevient identique.
+    // (alpha n'est pas un dépôt Git : l'empreinte fs ignore reports/ ; le contenu restauré redonne l'état initial.)
+    const restored = runScript("horn-fingerprint.ps1", ["-ProjectDir", ws.alpha], ws.home).stdout.trim().split(/\r?\n/).pop();
+    expect(restored).toBe(fp);
+  });
+});
+
+describe("outil indispensable indisponible", () => {
+  it("un exécutable introuvable rend le contrôle NON EXÉCUTÉ et le verdict NON VÉRIFIÉ (code 2), pas ÉCHOUÉ", () => {
+    const cfgPath = join(ws.beta, ".horn-dev.json");
+    const saved = readFileSync(cfgPath, "utf8");
+    try {
+      const cfg = JSON.parse(saved);
+      cfg.checks = [{ id: "outil-absent", command: "outil-horn-inexistant --version", profiles: ["quick"], mandatory: true }];
+      cfg.secrets = { enabled: false };
+      writeFileSync(cfgPath, JSON.stringify(cfg, null, 2));
+      const r = runScript("horn-check.ps1", ["-ProjectDir", ws.beta, "-Profile", "quick"], ws.home);
+      expect(r.code).toBe(2);
+      const latest = JSON.parse(readFileSync(join(ws.beta, "reports/dev/check-latest.json"), "utf8"));
+      expect(latest.steps.find((s: { name: string }) => s.name === "outil-absent").status).toBe("NON EXÉCUTÉ");
+    } finally {
+      writeFileSync(cfgPath, saved);
+    }
+  });
+});
+
 describe("isolation du plugin", () => {
   it("le dossier du plugin est inchangé après tous les scénarios", () => {
     expect(hashTree(PLUGIN_ROOT)).toBe(pluginHashBefore);

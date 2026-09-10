@@ -17,7 +17,8 @@ disallowed-tools: Edit Write NotebookEdit
 2. Interpréter le code de sortie : 0 SUCCÈS · 1 ÉCHEC (contrôle obligatoire échoué) · 2 NON VÉRIFIÉ (contrôle obligatoire non exécuté) · 3 usage · 4 projet non approuvé · 5 projet non initialisé.
    - Code 5 : le script affiche un audit lecture seule (technologies, commandes déclarées). Le restituer et proposer `/horn-dev:init` à l'utilisateur. N'exécuter aucune commande du projet à la main.
    - Code 4 : expliquer que les commandes d'un fichier de configuration ne sont exécutées qu'après approbation explicite (`/horn-dev:init` puis `-Approve`). Ne pas contourner.
-3. Lire le rapport (`<paths.reports>/check-latest.json` et le `.md` horodaté) ; pour chaque contrôle ÉCHOUÉ ou NON EXÉCUTÉ, ouvrir le journal indiqué et extraire la cause (message, test, fichier, ligne).
+3. Lire le rapport (`<paths.reports>/check-latest.json` et le `.md` horodaté) ; pour chaque contrôle ÉCHOUÉ ou NON EXÉCUTÉ, ouvrir le journal indiqué et extraire la cause (message, test, fichier, ligne). Un NON EXÉCUTÉ « exécutable introuvable » signifie qu'un outil du projet manque : le dire, ne pas l'installer.
+   Le rapport porte une empreinte `treeFingerprint` : elle identifie l'état exact du code vérifié. Si le code change ensuite, ces preuves sont périmées et le contrôle doit être relancé.
 4. Si un périmètre est donné, commenter en priorité les résultats qui le concernent ; ne pas lancer de variante privée des contrôles.
 
 ## Sorties

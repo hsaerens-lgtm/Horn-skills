@@ -37,3 +37,7 @@ RÉUSSI · ÉCHOUÉ · NON EXÉCUTÉ · NON APPLICABLE. Un contrôle obligatoire
 ## Réutilisation de Superpowers et Context7
 
 Superpowers est installé une fois en portée utilisateur et invoqué par ses noms réels (`references/superpowers.md` dans le plugin). Context7 est installé une fois en portée utilisateur (skill `find-docs`, règle `context7.md`, jeton dans `~/.config/context7/`). Les plugins de langage (typescript-lsp, pyright-lsp…) restent par projet : `/horn-dev:init` les suggère avec la commande exacte, sans les installer.
+
+## Point d'entrée et preuves (0.2.0)
+
+`/horn-dev:dev` classe l'intention (implémenter, corriger, analyser, relire, vérifier), dimensionne le parcours et applique la grille `references/verification-grid.md`. Analyser, relire et vérifier n'autorisent jamais la modification du produit. Chaque rapport de `horn-check` porte `treeFingerprint`, l'empreinte de l'état exact du code vérifié (`horn-fingerprint.ps1`) : une modification ultérieure périme les preuves. Un exécutable introuvable rend le contrôle NON EXÉCUTÉ, pas ÉCHOUÉ.
