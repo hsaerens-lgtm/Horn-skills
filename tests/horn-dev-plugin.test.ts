@@ -3,8 +3,8 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { PLUGIN_ROOT, REPO_ROOT, listFiles } from "./helpers.js";
 
-const SKILLS = ["dev", "init", "feature", "bugfix", "check", "review", "release", "resume"];
-const USER_ONLY = ["init", "release"];
+const SKILLS = ["dev", "init", "feature", "bugfix", "check", "review", "release", "resume", "testing"];
+const USER_ONLY = ["init", "release", "testing"];
 
 function frontmatter(path: string): Record<string, string> {
   const text = readFileSync(path, "utf8");
@@ -42,7 +42,7 @@ describe("manifestes du plugin", () => {
 });
 
 describe("skills du plugin", () => {
-  it("les huit skills existent avec name et description", () => {
+  it("les neuf skills existent avec name et description", () => {
     for (const s of SKILLS) {
       const path = join(PLUGIN_ROOT, "skills", s, "SKILL.md");
       expect(existsSync(path), path).toBe(true);
@@ -93,6 +93,25 @@ describe("skills du plugin", () => {
       expect(body).toContain("${CLAUDE_PLUGIN_ROOT}");
       expect(body).toContain("${CLAUDE_PROJECT_DIR}");
     }
+  });
+});
+
+describe("modèle de démonstration des tests", () => {
+  const demo = join(PLUGIN_ROOT, "templates", "testing-demo");
+  it("contient les deux familles de tests, chacune avec un échec volontaire nommé", () => {
+    for (const rel of [
+      "package.json", "playwright.config.js", "vitest.config.js", "app/server.js", "app/public/index.html", "src/counter.js",
+      "tests/unit/counter.test.js", "tests/unit/counter.demo-echec.test.js", "tests/e2e/counter.spec.js", "tests/e2e/counter.demo-echec.spec.js",
+      ".github/workflows/tests.yml", ".gitignore", "README.md",
+    ]) expect(existsSync(join(demo, rel)), rel).toBe(true);
+    expect(readFileSync(join(demo, "tests/unit/counter.demo-echec.test.js"), "utf8")).toContain("DÉMO ÉCHEC VOLONTAIRE");
+    expect(readFileSync(join(demo, "tests/e2e/counter.demo-echec.spec.js"), "utf8")).toContain("DÉMO ÉCHEC VOLONTAIRE");
+  });
+  it("épingle les versions et garde les rapports hors Git", () => {
+    const pkg = JSON.parse(readFileSync(join(demo, "package.json"), "utf8"));
+    for (const v of Object.values(pkg.devDependencies) as string[]) expect(v).toMatch(/^\d+\.\d+\.\d+$/);
+    const ignore = readFileSync(join(demo, ".gitignore"), "utf8");
+    for (const d of ["node_modules/", "test-results/", "playwright-report/"]) expect(ignore).toContain(d);
   });
 });
 

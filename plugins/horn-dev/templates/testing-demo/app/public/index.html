@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compteur de démonstration</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 3rem auto; padding: 0 1rem; color: #1b2a33; }
+    h1 { font-size: 1.6rem; }
+    .counter { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; }
+    output { font-size: 2.5rem; font-weight: 700; min-width: 3ch; text-align: center; }
+    button { font: inherit; padding: .5rem 1rem; border-radius: 6px; border: 1px solid #2c7a6b; background: #dcebe6; cursor: pointer; }
+    button:hover { background: #c8e0d8; }
+    .message { color: #2c7a6b; min-height: 1.5rem; }
+    form { display: flex; gap: .5rem; margin-top: 1.5rem; }
+    input { font: inherit; padding: .5rem; flex: 1; }
+  </style>
+</head>
+<body>
+  <h1>Compteur de démonstration</h1>
+  <p>Cette page existe pour montrer des tests de bout en bout : un vrai navigateur clique sur les boutons et vérifie ce qui s'affiche.</p>
+
+  <div class="counter">
+    <button id="decrement" type="button" aria-label="Diminuer">−</button>
+    <output id="value" aria-live="polite">0</output>
+    <button id="increment" type="button" aria-label="Augmenter">+</button>
+    <button id="reset" type="button">Remettre à zéro</button>
+  </div>
+  <p class="message" id="message"></p>
+
+  <form id="greeting-form">
+    <label for="name">Votre prénom</label>
+    <input id="name" name="name" placeholder="Ex. : Horn" required>
+    <button type="submit">Saluer</button>
+  </form>
+  <p class="message" id="greeting"></p>
+
+  <script type="module">
+    import { increment, decrement, reset, greet, LIMIT } from "/src/counter.js";
+    let count = 0;
+    const value = document.getElementById("value");
+    const message = document.getElementById("message");
+    const render = () => {
+      value.textContent = String(count);
+      message.textContent = count >= LIMIT ? `Limite de ${LIMIT} atteinte` : "";
+    };
+    document.getElementById("increment").addEventListener("click", () => { count = increment(count); render(); });
+    document.getElementById("decrement").addEventListener("click", () => { count = decrement(count); render(); });
+    document.getElementById("reset").addEventListener("click", () => { count = reset(); render(); });
+    document.getElementById("greeting-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      document.getElementById("greeting").textContent = greet(new FormData(event.target).get("name"));
+    });
+    render();
+  </script>
+</body>
+</html>

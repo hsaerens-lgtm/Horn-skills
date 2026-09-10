@@ -41,8 +41,9 @@ Le classement de l'intention repose sur des instructions : il fonctionne pour le
 | `/horn-dev:release` | `/horn-dev:release` | vérification complète puis construction locale ; jamais de publication ni de push |
 | `/horn-dev:resume` | `/horn-dev:resume` | état réel vs STATUS, prochaine action |
 | `/horn-dev:init` | `/horn-dev:init` | préparation légère, idempotente, avec votre accord |
+| `/horn-dev:testing` | `/horn-dev:testing explique` · `/horn-dev:testing demo C:\Temp\demo-tests` · `/horn-dev:testing setup` | explique tests unitaires, bout en bout et CI ; crée une mini application de démonstration (un test qui passe, un test volontairement en échec par famille) ; met en place Vitest ou pytest, Playwright si interface web, et le workflow CI dans votre projet, après votre accord |
 
-`init` et `release` ne peuvent être lancés que par vous. `check`, `review`, `resume` et l'intention « analyser » ne modifient jamais le produit.
+`init`, `release` et `testing` ne peuvent être lancés que par vous. `check`, `review`, `resume` et l'intention « analyser » ne modifient jamais le produit.
 
 ## Lire un compte rendu
 

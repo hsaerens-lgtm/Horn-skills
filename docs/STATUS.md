@@ -3,8 +3,9 @@
 Mis à jour le 2026-09-10. Fichier de reprise pour ce dépôt (source de la boîte à outils). L'état de chaque projet utilisateur vit dans son propre STATUS.
 
 ## Résumé
-- Contenu : plugin `horn-dev` **0.2.0** (8 skills dont le point d'entrée `dev`, 5 scripts PowerShell, grille de vérifications, modèles, références), marketplace locale `horn-toolbox`, 28 tests Vitest du dispositif, docs.
-- Installé en portée utilisateur : `horn-dev@horn-toolbox` 0.2.0 (mis à jour le 2026-09-10, `claude plugin details` : 8 skills ; les sessions déjà ouvertes doivent être relancées ou faire `/reload-plugins`), `superpowers@claude-plugins-official` 6.3.0, `security-guidance@claude-plugins-official` 2.0.7 (installé le 2026-09-10 sur accord ; 4 hooks ; venv Python créé au prochain démarrage), Context7. Portée projet ici : `typescript-lsp`.
+- Contenu : plugin `horn-dev` **0.3.0** (9 skills dont le point d'entrée `dev` et `testing`, 6 scripts PowerShell, grille de vérifications, mémo sur les tests, mini application de démonstration `templates/testing-demo/` avec Vitest, Playwright et workflow CI), marketplace locale `horn-toolbox`, 30 tests Vitest du dispositif, docs.
+- Installé en portée utilisateur : `horn-dev@horn-toolbox` 0.3.0 (mis à jour le 2026-09-10, `claude plugin details` : 9 skills ; les sessions déjà ouvertes doivent être relancées ou faire `/reload-plugins`), `superpowers@claude-plugins-official` 6.3.0, `security-guidance@claude-plugins-official` 2.0.7 (installé le 2026-09-10 sur accord ; 4 hooks ; couche motifs constatée), Context7. Portée projet ici : `typescript-lsp`.
+- Démonstration des tests exécutée le 2026-09-10 dans un dossier temporaire : Vitest 6 réussis + 1 échec volontaire, Playwright 4 réussis + 1 échec volontaire (capture et trace conservées) ; après `demo:clean` : 6 et 4 réussis, 0 échec. Piège rencontré et corrigé : port 4173 occupé par une autre application, `reuseExistingServer` désormais `false` et port 4731.
 - Dernière vérification : `npm run check:full` → SUCCÈS le 2026-09-10, empreinte `git:8cece6efd157b7d6` (avant commit de la 0.2.0) ; `npm test` 28/28 ; `claude plugin validate --strict` OK.
 
 ## Terminé (avec preuve)

@@ -1,0 +1,57 @@
+# Rejoue les tests unitaires et de bout en bout à chaque push et chaque pull request.
+# Ce fichier n'est exécuté qu'une fois le dépôt poussé sur GitHub.
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: Tests unitaires (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:unit
+        env:
+          CI: "true"
+      - name: Rapport JUnit
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: vitest-report
+          path: reports/
+          if-no-files-found: ignore
+
+  e2e:
+    name: Tests de bout en bout (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Navigateur Playwright
+        run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          CI: "true"
+      - name: Rapport HTML, captures et traces
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

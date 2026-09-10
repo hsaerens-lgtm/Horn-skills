@@ -1,0 +1,21 @@
+{
+  "name": "horn-testing-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mini application de démonstration horn-dev : tests unitaires (Vitest) et tests de bout en bout (Playwright), avec un test volontairement en échec dans chaque famille.",
+  "type": "module",
+  "scripts": {
+    "start": "node app/server.js",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "demo:clean": "node -e \"const fs=require('fs');for(const f of ['tests/unit/counter.demo-echec.test.js','tests/e2e/counter.demo-echec.spec.js']){if(fs.existsSync(f)){fs.unlinkSync(f);console.log('supprimé '+f)}}\""
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "vitest": "5.0.0"
+  }
+}
