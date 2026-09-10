@@ -1,7 +1,7 @@
 {
   "name": "horn-dev",
   "displayName": "horn-dev",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Assistance technique pour mes projets : un point d'entrée /horn-dev:dev qui classe la demande (implémenter, corriger, analyser, relire, vérifier), dimensionne le parcours et choisit les vérifications selon les parties touchées ; commandes spécialisées feature, bugfix, check, review, release, resume, init ; scripts génériques pilotés par un fichier .horn-dev.json propre à chaque projet, avec preuves liées à l'état exact du code.",
   "author": {
     "name": "Horn S"

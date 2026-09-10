@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { PLUGIN_ROOT, REPO_ROOT, listFiles } from "./helpers.js";
 
-const SKILLS = ["dev", "init", "feature", "bugfix", "check", "review", "release", "resume", "testing"];
+const SKILLS = ["dev", "init", "feature", "bugfix", "check", "review", "release", "resume", "testing", "design"];
 const USER_ONLY = ["init", "release", "testing"];
 
 function frontmatter(path: string): Record<string, string> {
@@ -42,7 +42,7 @@ describe("manifestes du plugin", () => {
 });
 
 describe("skills du plugin", () => {
-  it("les neuf skills existent avec name et description", () => {
+  it("les dix skills existent avec name et description", () => {
     for (const s of SKILLS) {
       const path = join(PLUGIN_ROOT, "skills", s, "SKILL.md");
       expect(existsSync(path), path).toBe(true);
@@ -122,6 +122,14 @@ describe("hygiène du plugin", () => {
       expect(text, rel).not.toMatch(/[A-Z]:\\Users\\[^\\\s]+\\(?!\.)/i);
       if (!rel.startsWith("references/legacy-mapping")) expect(text, rel).not.toMatch(/\bArness\b/);
     }
+  });
+
+  it("le skill design réutilise React Bits par son nom sans en recopier la source", () => {
+    const body = readFileSync(join(PLUGIN_ROOT, "skills", "design", "SKILL.md"), "utf8");
+    expect(body).toContain("anthropic-skills:reactbits");
+    expect(body).toContain("design-guide.md");
+    expect(existsSync(join(PLUGIN_ROOT, "components")), "aucune copie de composants React Bits dans le plugin").toBe(false);
+    expect(listFiles(PLUGIN_ROOT).some((f) => /\.(tsx|jsx)$/.test(f)), "aucun fichier React dans le plugin").toBe(false);
   });
 
   it("aucun motif de secret évident dans le plugin", () => {

@@ -21,6 +21,7 @@ L'utilisateur pilote le produit, les priorités et l'expérience utilisateur. Tu
 | « analyse », « explique », « pourquoi », « qu'est-ce qui se passe » | **analyser** | **non** : diagnostic seulement, proposer ensuite la correction |
 | « relis », « revue », « qu'en penses-tu », « est-ce correct » | **relire** | **non** : appliquer `/horn-dev:review` |
 | « vérifie », « lance les tests », « est-ce que tout passe » | **vérifier** | **non** : appliquer `/horn-dev:check` |
+| « rends ça plus joli », « page d'accueil », « design », « animation », « maquette » | **concevoir une interface** | oui : appliquer `/horn-dev:design` (plan de design, états, accessibilité, React Bits si React) |
 
 En cas de doute entre analyser et corriger, choisir **analyser** et demander l'autorisation de corriger à la fin. Une fois l'intention annoncée à l'utilisateur en une ligne, ne pas la changer sans son accord.
 

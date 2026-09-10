@@ -27,6 +27,7 @@ La liste des projets approuvés vit dans `%USERPROFILE%\.horn-dev\` (réglage lo
 | `/horn-dev:init` | adaptation légère d'un projet | crée seulement les fichiers de suivi absents | utilisateur seul |
 | `/horn-dev:release` | version locale, jamais publiée | construit un artefact | utilisateur seul |
 | `/horn-dev:testing` | expliquer et mettre en place tests unitaires, bout en bout (Playwright si interface web) et CI ; démonstration | installe des dépendances de test et crée des tests, après accord | utilisateur seul |
+| `/horn-dev:design [écran, intention]` | plan de design, états, accessibilité, mouvement sobre ; React Bits par le skill `anthropic-skills:reactbits` si disponible | oui (implémentation d'interface) | utilisateur ou Claude |
 
 Le routage de `dev` repose sur des instructions : il est fiable pour les formulations courantes mais pas garanti. Les commandes spécialisées restent l'invocation explicite fiable. Une commande seule ne déclenche jamais tout le parcours.
 
