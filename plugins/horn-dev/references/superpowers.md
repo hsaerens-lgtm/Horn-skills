@@ -25,3 +25,7 @@ Règle d'usage : trouver la version réellement installée dans le projet (manif
 ## Ce qui reste propre à chaque projet
 
 Bibliothèques de tests, environnements Python, dépendances Node, extensions Godot, plugins de langage (typescript-lsp, pyright-lsp…), connexions à des bases ou services : configurés et installés dans le projet concerné, jamais dans horn-dev.
+
+## security-guidance (revue de sécurité en session)
+
+Plugin officiel `security-guidance@claude-plugins-official` (portée utilisateur, installé le 2026-09-10). Il agit par hooks : motifs risqués à chaque édition (sans modèle), revue du diff en fin de tour et revue agentique à chaque commit ou push faits par Claude (appels modèle séparés). Il ne bloque rien et ne modifie aucun fichier : ses constats reviennent à Claude, qui les traite dans la conversation. horn-dev ne le recopie pas : `review` et la grille restent la revue **à la demande** ; security-guidance est la couche **continue**. Ni l'un ni l'autre ne constituent un audit de sécurité complet. Règles propres à un projet : `.claude/claude-security-guidance.md` et `.claude/security-patterns.yaml` dans le projet. Désactivation : `SECURITY_GUIDANCE_DISABLE=1` ou `claude plugin disable security-guidance@claude-plugins-official`.
