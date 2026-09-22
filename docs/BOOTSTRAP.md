@@ -1,6 +1,6 @@
 # Installer horn-dev sur une nouvelle machine : prompt à donner à Claude Code
 
-Coller le texte ci-dessous dans une session Claude Code ouverte **dans le dossier où se trouve ce dépôt** (cloné ou copié). Il est en anglais pour être partageable ; Claude répondra dans la langue de votre message si vous ajoutez une phrase en français au début. Le prompt demande à Claude de vérifier avant d'installer, de demander l'accord pour tout téléchargement lourd ou droit administrateur, et de ne rien pousser.
+Récupérer d'abord le dépôt : `git clone https://github.com/hsaerens-lgtm/Horn-skills.git` (public). Puis coller le texte ci-dessous dans une session Claude Code ouverte **dans le dossier cloné**. Il est en anglais pour être partageable ; Claude répondra dans la langue de votre message si vous ajoutez une phrase en français au début. Le prompt demande à Claude de vérifier avant d'installer, de demander l'accord pour tout téléchargement lourd ou droit administrateur, et de ne rien pousser.
 
 Prérequis que Claude ne peut pas installer seul sans accord : Node.js 24+, Git, Claude Code CLI connecté, Python 3.10+ (pour security-guidance). Sur Windows, `winget` permet d'installer Gitleaks sans droits administrateur.
 

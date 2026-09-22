@@ -1,5 +1,7 @@
 # horn-toolbox
 
+Dépôt public : https://github.com/hsaerens-lgtm/Horn-skills (`git clone https://github.com/hsaerens-lgtm/Horn-skills.git`).
+
 Dépôt source de **horn-dev**, ma boîte à outils de développement assisté pour Claude Code : un plugin personnel (portée utilisateur) qui apporte à chacun de mes projets la même méthode (cadrage, fonctionnalités, correction de bugs, vérification, revue, version locale, reprise de session) sans recopier quoi que ce soit dans les projets. Chaque projet ne garde que ses informations propres dans un petit fichier `.horn-dev.json`.
 
 - Le plugin : [plugins/horn-dev/README.md](plugins/horn-dev/README.md)

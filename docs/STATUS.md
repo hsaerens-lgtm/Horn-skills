@@ -1,6 +1,6 @@
 # État du dépôt horn-toolbox (STATUS)
 
-Mis à jour le 2026-09-10. Fichier de reprise pour ce dépôt (source de la boîte à outils). L'état de chaque projet utilisateur vit dans son propre STATUS.
+Mis à jour le 2026-09-22. Fichier de reprise pour ce dépôt (source de la boîte à outils). L'état de chaque projet utilisateur vit dans son propre STATUS.
 
 ## Résumé
 - Contenu : plugin `horn-dev` **0.4.0** (10 skills dont le point d'entrée `dev`, `testing` et `design`, 6 scripts PowerShell, grille de vérifications, mémo sur les tests, guide de conception d'interface, mini application de démonstration `templates/testing-demo/`), marketplace locale `horn-toolbox`, 31 tests Vitest du dispositif, docs.
@@ -25,7 +25,11 @@ Mis à jour le 2026-09-10. Fichier de reprise pour ce dépôt (source de la boî
 - `security-guidance` : couche « motifs » constatée en fonctionnement le 2026-09-10 (avertissement sur un `eval(` cité dans une page HTML) ; revues à appel modèle (fin de tour, commit) encore à observer en session projet.
 
 ## Bloqué
-- Rien côté local. CI en attente d'un dépôt distant (aucun push sans demande).
+- Rien côté local.
+
+## Dépôt distant et CI (2026-09-22)
+- Dépôt **public** https://github.com/hsaerens-lgtm/Horn-skills, premier push sur demande explicite de l'utilisateur (commit `8d01bc4`), après scan Gitleaks de l'historique et retrait des `.pyc` suivis par erreur. La règle `.claude/settings.json` interdisant `git push` a été levée le temps du push puis restaurée.
+- Première exécution de `quality.yml` : job « Tests du dispositif (Windows PowerShell 5.1) » **RÉUSSI** ; job « Recherche de secrets (gitleaks-action@v3) » **ÉCHOUÉ** avec « Unexpected exit code [1] » (erreur d'exécution, pas une fuite : une fuite donnerait le code 2). Journaux lisibles seulement connecté à GitHub. Hypothèse : premier push, SHA « before » nul mal géré par l'action. Vérification au push suivant ; sinon remplacement par un appel direct du binaire gitleaks identique à horn-check.
 
 ## Contraintes et limites de validation
 - Routage par instructions non garanti ; commandes spécialisées = invocation fiable.

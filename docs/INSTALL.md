@@ -77,7 +77,7 @@ Les fichiers de vos projets (`.horn-dev.json`, STATUS, fiches, rapports) restent
 Le plus simple : ouvrir Claude Code dans le dépôt cloné et lui coller le prompt de [BOOTSTRAP.md](BOOTSTRAP.md), qui déroule les étapes ci-dessous en vérifiant chacune. Manuellement :
 
 1. Prérequis : Claude Code CLI, Git, Windows PowerShell 5.1 ou PowerShell 7 (sur macOS/Linux : `pwsh`). Optionnels : Gitleaks, Node/Python/… selon les projets.
-2. Cloner ou copier ce dépôt (c'est le seul artefact nécessaire), puis « Installer » ci-dessus avec le nouveau chemin.
+2. Cloner ce dépôt : `git clone https://github.com/hsaerens-lgtm/Horn-skills.git` (c'est le seul artefact nécessaire), puis « Installer » ci-dessus avec le nouveau chemin.
 3. Outils partagés recommandés : `claude plugin install superpowers@claude-plugins-official --scope user` ; `claude plugin install security-guidance@claude-plugins-official --scope user` (Python ≥ 3.10 requis ; revue de sécurité automatique, appels modèle supplémentaires) ; `npx ctx7@latest setup --cli --claude` puis `npx ctx7@latest login` ; `winget install --id Gitleaks.Gitleaks --exact --scope user`.
 4. Dans chaque projet : ouvrir Claude Code, `/horn-dev:init`, valider, puis `/horn-dev:check`.
 
