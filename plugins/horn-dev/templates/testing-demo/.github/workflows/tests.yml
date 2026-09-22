@@ -1,5 +1,7 @@
 # Rejoue les tests unitaires et de bout en bout à chaque push et chaque pull request.
 # Ce fichier n'est exécuté qu'une fois le dépôt poussé sur GitHub.
+# Si vous ajoutez un job gitleaks/gitleaks-action : il échoue au tout premier push d'un dépôt (commit racine sans
+# parent, "unknown revision") et fonctionne aux pushes suivants ; scanner l'historique en local avant ce premier push.
 name: tests
 
 on:

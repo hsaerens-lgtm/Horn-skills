@@ -43,6 +43,10 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      # Limite connue : au tout premier push d'un dépôt, l'action demande l'intervalle "<commit racine>^..<head>" ;
+      # le commit racine n'ayant pas de parent, Git répond "unknown revision" et le job échoue (code 1, scan partiel).
+      # Constaté le 2026-09-22 sur ce dépôt ; l'historique complet avait été scanné localement (horn-check, profil full).
+      # Les pushes suivants partent d'un commit avec parent et fonctionnent.
       - uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
